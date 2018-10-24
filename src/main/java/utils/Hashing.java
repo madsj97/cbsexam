@@ -3,8 +3,6 @@ package utils;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.Random;
-
 import org.bouncycastle.util.encoders.Hex;
 
 public final class Hashing {
@@ -14,15 +12,8 @@ public final class Hashing {
   public static String md5(String rawString) {
     try {
 
-      Random random = new Random();
-      byte[] salt = new byte[12];
-      random.nextBytes(salt);
-
       // We load the hashing algoritm we wish to use.
       MessageDigest md = MessageDigest.getInstance("MD5");
-
-      md.update(salt);
-      //md.update(rawString.getBytes("UTF8"));
 
       // We convert to byte array
       byte[] byteArray = md.digest(rawString.getBytes());
