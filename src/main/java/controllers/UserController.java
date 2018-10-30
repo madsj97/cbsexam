@@ -3,7 +3,10 @@ package controllers;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+
+import cache.UserCache;
 import model.User;
+import utils.Hashing;
 import utils.Log;
 
 public class UserController {
@@ -107,14 +110,15 @@ public class UserController {
     }
 
     // Insert the user in the DB
-    // TODO: Hash the user password before saving it.
+    // TODO: Hash the user password before saving it. :FIX
     int userID = dbCon.insert(
         "INSERT INTO user(first_name, last_name, password, email, created_at) VALUES('"
             + user.getFirstname()
             + "', '"
             + user.getLastname()
             + "', '"
-            + user.getPassword()
+                //Hashing the user password with sha hashing before saving it when creating a user (Gemme saltet i databasen eller lave et nyt salt)
+            + Hashing.sha(Hashing.getSalt() + user.getPassword())
             + "', '"
             + user.getEmail()
             + "', "

@@ -3,9 +3,32 @@ package utils;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import org.bouncycastle.util.encoders.Hex;
 
 public final class Hashing {
+
+  public static byte[] getSalt(){
+
+    try {
+
+      // Using a SecureRandom to generate a secure random value
+      SecureRandom sRandom = SecureRandom.getInstance("MD5", "SUN");
+
+      // Creating an array for the salt
+      byte[] salt = new byte[20];
+
+      // We generate the random salt
+      sRandom.nextBytes(salt);
+
+      // We return the created salt
+      return salt;
+    }
+    catch (Exception e){
+
+    }
+    return null;
+  }
 
   // TODO: You should add a salt and make this secure
   // Salt reference http://www.java2s.com/Tutorial/Java/0490__Security/Setpasswordsalt.htm
