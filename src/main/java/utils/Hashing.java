@@ -8,30 +8,35 @@ import org.bouncycastle.util.encoders.Hex;
 
 public final class Hashing {
 
-  public static byte[] getSalt(){
+//  public static byte[] getSalt(){
+//
+//    try {
+//
+//      // Using a SecureRandom to generate a secure random value
+//      SecureRandom sRandom = SecureRandom.getInstance("MD5", "SUN");
+//
+//      // Creating an array for the salt
+//      byte[] salt = new byte[20];
+//
+//      // We generate the random salt
+//      sRandom.nextBytes(salt);
+//
+//      // We return the created salt
+//      return salt;
+//    }
+//    catch (Exception e){
+//
+//    }
+//    return null;
+//  }
 
-    try {
-
-      // Using a SecureRandom to generate a secure random value
-      SecureRandom sRandom = SecureRandom.getInstance("MD5", "SUN");
-
-      // Creating an array for the salt
-      byte[] salt = new byte[20];
-
-      // We generate the random salt
-      sRandom.nextBytes(salt);
-
-      // We return the created salt
-      return salt;
-    }
-    catch (Exception e){
-
-    }
-    return null;
+  // TODO: You should add a salt and make this secure :FIX
+  public static String md5WithSalt(String string) {
+    String salt = "G27dPfdWP8OX66VS9zK0";
+    String hashedPassword = string + salt;
+    return md5(hashedPassword);
   }
 
-  // TODO: You should add a salt and make this secure
-  // Salt reference http://www.java2s.com/Tutorial/Java/0490__Security/Setpasswordsalt.htm
   public static String md5(String rawString) {
     try {
 
@@ -61,11 +66,19 @@ public final class Hashing {
     return null;
   }
 
-  // TODO: You should add a salt and make this secure
+  // TODO: You should add a salt and make this secure :FIX
+  public static String shaWithSalt(String string) {
+    String salt = "G27dPfdWP8OX66VS9zK0";
+    String hashedPassword = string + salt;
+    return sha(hashedPassword);
+  }
+
   public static String sha(String rawString) {
     try {
       // We load the hashing algoritm we wish to use.
       MessageDigest digest = MessageDigest.getInstance("SHA-256");
+
+
 
       // We convert to byte array
       byte[] hash = digest.digest(rawString.getBytes(StandardCharsets.UTF_8));

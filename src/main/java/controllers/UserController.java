@@ -118,7 +118,7 @@ public class UserController {
             + user.getLastname()
             + "', '"
                 //Hashing the user password with sha hashing before saving it when creating a user (Gemme saltet i databasen eller lave et nyt salt)
-            + Hashing.sha(Hashing.getSalt() + user.getPassword())
+            + Hashing.shaWithSalt(/*Hashing.getSalt() + Skal bruges hvis jeg vælger at lave random generated salt*/ user.getPassword())
             + "', '"
             + user.getEmail()
             + "', "

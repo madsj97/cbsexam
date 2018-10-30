@@ -1,5 +1,6 @@
 package com.cbsexam;
 
+import cache.UserCache;
 import com.google.gson.Gson;
 import controllers.UserController;
 import java.util.ArrayList;
@@ -16,6 +17,12 @@ import utils.Log;
 
 @Path("user")
 public class UserEndpoints {
+
+  private UserCache userCache;
+
+  public UserEndpoints (UserCache userCache) {
+    this.userCache = userCache;
+  }
 
   /**
    * @param idUser
@@ -46,8 +53,8 @@ public class UserEndpoints {
     // Write to log that we are here
     Log.writeLog(this.getClass().getName(), this, "Get all users", 0);
 
-    // Get a list of users
-    ArrayList<User> users = UserController.getUsers();
+    // Get a list of users -- Added caching
+    ArrayList<User> users = userCache.getUsers(true); //UserController.getUsers();
 
     // TODO: Add Encryption to JSON :FIX
     // Transfer users to json in order to return it to the user
@@ -93,6 +100,8 @@ public class UserEndpoints {
 
   // TODO: Make the system able to delete users
   public Response deleteUser(String x) {
+
+
 
     // Return a response with status 200 and JSON as type
     return Response.status(400).entity("Endpoint not implemented yet").build();
