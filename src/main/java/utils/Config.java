@@ -22,6 +22,11 @@ public final class Config {
   private static long PRODUCT_TTL;
   private static long USERS_TTL;
   private static long ORDER_TTL;
+  private static String ENCRYPTION_KEY;
+
+  public static char[] getEncryptionKey() {
+    return ENCRYPTION_KEY.toCharArray();
+  }
 
   public static long getOrderTtl() {
     return ORDER_TTL;
@@ -111,5 +116,6 @@ public final class Config {
     PRODUCT_TTL = json.get("PRODUCT_TTL").getAsLong();
     USERS_TTL = json.get("USERS_TTL").getAsLong();
     ORDER_TTL = json.get("ORDER_TTL").getAsLong();
+    ENCRYPTION_KEY = json.get("ENCRYPTION_KEY").getAsString();
   }
 }

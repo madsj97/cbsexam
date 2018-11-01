@@ -17,11 +17,7 @@ import utils.Encryption;
 @Path("product")
 public class ProductEndpoints {
 
-  private ProductCache productCache;
-
-  public ProductEndpoints(ProductCache productCache) {
-    this.productCache = productCache;
-  }
+  private static ProductCache productCache = new ProductCache();
 
   /**
    * @param idProduct
@@ -48,10 +44,10 @@ public class ProductEndpoints {
   @Path("/")
   public Response getProducts() {
 
-    //ProductCache productCache = new ProductCache();
-
     // Call our controller-layer in order to get the order from the DB
-    ArrayList<Product> products = productCache.getProducts(true); //ProductController.getProducts();
+    //ArrayList<Product> products = ProductController.getProducts();
+    ArrayList<Product> products = productCache.getProducts(true);
+
 
     // TODO: Add Encryption to JSON :FIX
     // We convert the java object to json with GSON library imported in Maven
