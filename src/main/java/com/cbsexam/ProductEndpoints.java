@@ -46,7 +46,7 @@ public class ProductEndpoints {
 
     // Call our controller-layer in order to get the order from the DB
     //ArrayList<Product> products = ProductController.getProducts();
-    ArrayList<Product> products = productCache.getProducts(true);
+    ArrayList<Product> products = productCache.getProducts(false);
 
 
     // TODO: Add Encryption to JSON :FIX

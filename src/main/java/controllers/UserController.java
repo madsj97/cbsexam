@@ -3,8 +3,6 @@ package controllers;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-
-import cache.UserCache;
 import model.User;
 import utils.Hashing;
 import utils.Log;
@@ -112,8 +110,7 @@ public class UserController {
     // Insert the user in the DB
     // TODO: Hash the user password before saving it. :FIX
     int userID = dbCon.insert(
-        "INSERT INTO user(first_name, last_name, password, email, created_at) VALUES('"
-            + user.getFirstname()
+        "INSERT INTO user(first_name, last_name, password, email, created_at) VALUES('" + user.getFirstname()
             + "', '"
             + user.getLastname()
             + "', '"
@@ -135,5 +132,45 @@ public class UserController {
 
     // Return user
     return user;
+  }
+
+
+  public static boolean delete(int id) {
+
+    Log.writeLog(UserController.class.getName(), id, "Deleting a user in DB",0);
+
+    if (dbCon == null) {
+      dbCon = new DatabaseController();
+    }
+
+    User user = UserController.getUser(id);
+
+    if(user != null){
+      dbCon.deleteUpdate("DELETE FROM user WHERE id =" + id);
+
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  public static boolean update(User user, int userId) {
+
+    Log.writeLog(UserController.class.getName(), user, "Updating a user in DB",0);
+
+    if (dbCon == null) {
+      dbCon = new DatabaseController();
+    }
+
+    if (user != null) {
+      dbCon.deleteUpdate("UPDATE user SET first_name = '"+ user.getFirstname()
+              + "', last_name = '" + user.getLastname()
+              + "', password = '" + Hashing.shaWithSalt(user.getPassword())
+              + "', email = '" + user.getEmail()
+              + "' WHERE id = " + userId);
+      return true;
+    } else {
+      return false;
+    }
   }
 }

@@ -25,7 +25,7 @@ public class UserCache {
 
         if (forceUpdate
                 || ((this.created + this.ttl) >= (System.currentTimeMillis() / 1000L))
-                || this.users.isEmpty()) {
+                || this.users == null) {
 
             //Get users from controller, since we wish to update
             ArrayList<User> users = UserController.getUsers();

@@ -110,4 +110,22 @@ public class DatabaseController {
     // Return the resultset which at this point will be null
     return result;
   }
+
+  // Creating a method so we can delete, but also update an object.
+  // Reason behind creating both in only one method, is that the method would have identical code
+  public boolean deleteUpdate(String sql) {
+
+    if (connection == null) {
+      connection = getConnection();
+    }
+
+    try {
+      PreparedStatement deleteUpdate = connection.prepareStatement(sql);
+      deleteUpdate.executeUpdate();
+      return true;
+    } catch (SQLException e) {
+      System.out.println(e.getMessage());
+      return false;
+    }
+  }
 }
