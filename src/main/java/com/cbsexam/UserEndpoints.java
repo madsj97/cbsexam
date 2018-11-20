@@ -64,7 +64,11 @@ public class UserEndpoints {
         json = Encryption.encryptDecryptXOR(json);
 
         // Return the users with the status code 200
-        return Response.status(200).type(MediaType.APPLICATION_JSON).entity(json).build();
+        if(users != null) {
+            return Response.status(200).type(MediaType.APPLICATION_JSON).entity(json).build();
+        } else {
+            return Response.status(400).entity("Could not get users").build();
+        }
     }
 
     @POST
@@ -122,27 +126,28 @@ public class UserEndpoints {
             // Return a response with status 200 and JSON as type
 
             return Response.status(200).type(MediaType.APPLICATION_JSON_TYPE).entity("Deleted the user with the id: " + id).build();
+        } else {
+            return Response.status(400).entity("The user was not found, and therefore not deleted").build();
         }
-
-
-        return Response.status(400).entity("The user was not found, and therefore not deleted").build();
     }
 
     // TODO: Make the system able to update users :FIX
     @POST
-    @Path("/update/{userId}")
+    @Path("/update/{userId}/{token}")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response updateUser(@PathParam("userId") int userId, String body) {
+    public Response updateUser(@PathParam("userId") int id, @PathParam("token") String token, String body)  {
 
         User user = new Gson().fromJson(body, User.class);
 
-        Boolean update = UserController.update(user, userId);
+        DecodedJWT jwt = UserController.verifier(token);
+
+        Boolean update = UserController.update(user, jwt.getClaim("test").asInt());
 
         userCache.getUsers(true);
 
         // Return a response with status 200 and JSON as type
         if (update) {
-            return Response.status(200).type(MediaType.APPLICATION_JSON_TYPE).entity("Updated the user with the id: " + userId).build();
+            return Response.status(200).type(MediaType.APPLICATION_JSON_TYPE).entity("Updated the user with the id: " + id).build();
         } else {
             return Response.status(400).entity("The user was not found, and therefore not updated").build();
         }

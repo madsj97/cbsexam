@@ -198,7 +198,8 @@ public class UserController {
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 
         for (User user : users) {
-            if (user.getEmail().equals(loginUser.getEmail()) && user.getPassword().equals(Hashing.shaWithSalt(loginUser.getPassword()))) {
+            if (user.getEmail().equals(loginUser.getEmail())
+                    && user.getPassword().equals(Hashing.shaWithSalt(loginUser.getPassword()))) {
 
                 try {
                     Algorithm algorithm = Algorithm.HMAC256("secret_tokenkey");

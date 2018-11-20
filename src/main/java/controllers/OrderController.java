@@ -130,18 +130,20 @@ public class OrderController {
       dbCon = new DatabaseController();
     }
 
-    // Save addresses to database and save them back to initial order instance
-    order.setBillingAddress(AddressController.createAddress(order.getBillingAddress()));
-    order.setShippingAddress(AddressController.createAddress(order.getShippingAddress()));
-
-    // Save the user to the database and save them back to initial order instance
-    order.setCustomer(UserController.createUser(order.getCustomer()));
-
     // TODO: Enable transactions in order for us to not save the order if somethings fails for some of the other inserts. :FIX
-    Connection connection = null;
+    Connection connection = DatabaseController.getConnection();
 
     try {
+
       connection.setAutoCommit(false);
+
+      // Save addresses to database and save them back to initial order instance
+      order.setBillingAddress(AddressController.createAddress(order.getBillingAddress()));
+      order.setShippingAddress(AddressController.createAddress(order.getShippingAddress()));
+
+      // Save the user to the database and save them back to initial order instance
+      order.setCustomer(UserController.createUser(order.getCustomer()));
+
       // Insert the product in the DB
       int orderID = dbCon.insert(
               "INSERT INTO orders(user_id, billing_address_id, shipping_address_id, order_total, created_at, updated_at) VALUES("
