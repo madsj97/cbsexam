@@ -119,15 +119,19 @@ public class UserEndpoints {
 
         DecodedJWT token = UserController.verifier(body);
 
-        Boolean delete = UserController.delete(token.getClaim("test").asInt());
+        if(token.getClaim("test").asInt() == id) {
 
-        if (delete) {
-            userCache.getUsers(true);
-            // Return a response with status 200 and JSON as type
+            Boolean delete = UserController.delete(token.getClaim("test").asInt());
 
-            return Response.status(200).type(MediaType.APPLICATION_JSON_TYPE).entity("Deleted the user with the id: " + id).build();
+            if (delete) {
+                userCache.getUsers(true);
+                // Return a response with status 200 and JSON as type
+                return Response.status(200).type(MediaType.APPLICATION_JSON_TYPE).entity("You deleted your user").build();
+            } else {
+                return Response.status(400).entity("The user was not found, and therefore not deleted").build();
+            }
         } else {
-            return Response.status(400).entity("The user was not found, and therefore not deleted").build();
+            return Response.status(400).entity("You cant delete any other users than your own").build();
         }
     }
 
