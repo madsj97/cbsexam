@@ -8,32 +8,15 @@ import org.bouncycastle.util.encoders.Hex;
 
 public final class Hashing {
 
-//  public static byte[] getSalt(){
-//
-//    try {
-//
-//      // Using a SecureRandom to generate a secure random value
-//      SecureRandom sRandom = SecureRandom.getInstance("MD5", "SUN");
-//
-//      // Creating an array for the salt
-//      byte[] salt = new byte[20];
-//
-//      // We generate the random salt
-//      sRandom.nextBytes(salt);
-//
-//      // We return the created salt
-//      return salt;
-//    }
-//    catch (Exception e){
-//
-//    }
-//    return null;
-//  }
-
   // TODO: You should add a salt and make this secure :FIX
   public static String md5WithSalt(String string) {
+    //Setting the salt
     String salt = "G27dPfdWP8OX66VS9zK0";
+
+    //String we want to hash
     String hashedPassword = string + salt;
+
+    //Returns the hash + salt
     return md5(hashedPassword);
   }
 
@@ -68,8 +51,13 @@ public final class Hashing {
 
   // TODO: You should add a salt and make this secure :FIX
   public static String shaWithSalt(String string) {
+    //Setting the salt
     String salt = "G27dPfdWP8OX66VS9zK0";
+
+    //String we want to hash
     String hashedPassword = string + salt;
+
+    //Returns the hash + salt
     return sha(hashedPassword);
   }
 

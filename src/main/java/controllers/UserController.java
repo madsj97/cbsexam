@@ -48,7 +48,8 @@ public class UserController {
                                 rs.getString("first_name"),
                                 rs.getString("last_name"),
                                 rs.getString("password"),
-                                rs.getString("email"));
+                                rs.getString("email"),
+                                rs.getLong("created_at"));
 
                 // return the create object
                 return user;
@@ -91,7 +92,8 @@ public class UserController {
                                 rs.getString("first_name"),
                                 rs.getString("last_name"),
                                 rs.getString("password"),
-                                rs.getString("email"));
+                                rs.getString("email"),
+                                rs.getLong("created_at"));
 
                 // Add element to list
                 users.add(user);
@@ -125,7 +127,7 @@ public class UserController {
                         + user.getLastname()
                         + "', '"
                         //Hashing the user password with sha hashing before saving it when creating a user (Gemme saltet i databasen eller lave et nyt salt)
-                        + Hashing.shaWithSalt(/*Hashing.getSalt() + Skal bruges hvis jeg vælger at lave random generated salt*/ user.getPassword())
+                        + Hashing.shaWithSalt(user.getPassword())
                         + "', '"
                         + user.getEmail()
                         + "', "
@@ -147,32 +149,40 @@ public class UserController {
 
     public static boolean delete(int id) {
 
+        // Writing in the log what we are doing
         Log.writeLog(UserController.class.getName(), id, "Deleting a user in DB", 0);
 
+        // Checking for the DB connection
         if (dbCon == null) {
             dbCon = new DatabaseController();
         }
 
         User user = UserController.getUser(id);
 
+        // Checking if there's a user object with any information in it
         if (user != null) {
+            //Running the method and statement to delete a user on an id
             dbCon.deleteUpdate("DELETE FROM user WHERE id =" + id);
-
             return true;
         } else {
+            // Returns false if user equals to null
             return false;
         }
     }
 
     public static boolean update(User user, int userId) {
 
+        // Writing in the log what we are doing
         Log.writeLog(UserController.class.getName(), user, "Updating a user in DB", 0);
 
+        // Checking for the DB connection
         if (dbCon == null) {
             dbCon = new DatabaseController();
         }
 
+        // Checking if there's a user object with any information in it
         if (user != null) {
+            //Running the method and statement to delete a user on an id
             dbCon.deleteUpdate("UPDATE user SET first_name = '" + user.getFirstname()
                     + "', last_name = '" + user.getLastname()
                     + "', password = '" + Hashing.shaWithSalt(user.getPassword())
@@ -180,14 +190,17 @@ public class UserController {
                     + "' WHERE id = " + userId);
             return true;
         } else {
+            // Returns false if user equals to null
             return false;
         }
     }
 
     public static String login(User loginUser) {
 
+        // Writing in the log what we are doing
         Log.writeLog(UserController.class.getName(), loginUser, "Logging in a user", 0);
 
+        // Checking for the DB connection
         if (dbCon == null) {
             dbCon = new DatabaseController();
         }
