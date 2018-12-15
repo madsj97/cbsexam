@@ -33,6 +33,7 @@ public class OrderEndpoints {
     // TODO: Add Encryption to JSON :FIX
     // We convert the java object to json with GSON library imported in Maven
     String json = new Gson().toJson(order);
+    // Added encryption to the JSON
     json = Encryption.encryptDecryptXOR(json);
 
     // Return a response with status 200 and JSON as type
@@ -45,12 +46,12 @@ public class OrderEndpoints {
   public Response getOrders() {
 
     // Call our controller-layer in order to get the order from the DB
-    //ArrayList<Order> orders = OrderController.getOrders();
     ArrayList<Order> orders = orderCache.getOrders(false);
 
     // TODO: Add Encryption to JSON :FIX
     // We convert the java object to json with GSON library imported in Maven
     String json = new Gson().toJson(orders);
+    // Added encryption to the JSON
     json = Encryption.encryptDecryptXOR(json);
 
     // Return a response with status 200 and JSON as type

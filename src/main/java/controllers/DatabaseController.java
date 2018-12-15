@@ -115,13 +115,18 @@ public class DatabaseController {
   // Reason behind creating both in only one method, is that the method would have identical code
   public boolean deleteUpdate(String sql) {
 
+    //Checking for connection
     if (connection == null) {
       connection = getConnection();
     }
 
     try {
+      // Building the statement
       PreparedStatement deleteUpdate = connection.prepareStatement(sql);
+
+      //Executing the query
       deleteUpdate.executeUpdate();
+
       return true;
     } catch (SQLException e) {
       System.out.println(e.getMessage());

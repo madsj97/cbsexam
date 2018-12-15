@@ -33,13 +33,15 @@ public class UserEndpoints {
         // TODO: Add Encryption to JSON :FIX
         // Convert the user object to json in order to return the object
         String json = new Gson().toJson(user);
+        //Added the encryption to the json
         json = Encryption.encryptDecryptXOR(json);
 
-        // Return the user with the status code 200
         // TODO: What should happen if something breaks down? :FIX
         if (user != null) {
+            // Return the user with the status code 200
             return Response.status(200).type(MediaType.APPLICATION_JSON_TYPE).entity(json).build();
         } else {
+            // Returns status code 400
             return Response.status(400).entity("Could not get user by id").build();
         }
     }
@@ -63,10 +65,11 @@ public class UserEndpoints {
         String json = new Gson().toJson(users);
         json = Encryption.encryptDecryptXOR(json);
 
-        // Return the users with the status code 200
-        if(users != null) {
+        if (users != null) {
+            // Return the users with the status code 200
             return Response.status(200).type(MediaType.APPLICATION_JSON).entity(json).build();
         } else {
+            // Returns status code 400
             return Response.status(400).entity("Could not get users").build();
         }
     }
@@ -90,6 +93,7 @@ public class UserEndpoints {
             // Return a response with status 200 and JSON as type
             return Response.status(200).type(MediaType.APPLICATION_JSON_TYPE).entity(json).build();
         } else {
+            // Return status code 400
             return Response.status(400).entity("Could not create user").build();
         }
     }
@@ -103,11 +107,14 @@ public class UserEndpoints {
         // Read the json from loginUser and transfer it to a user class
         User loginUser = new Gson().fromJson(body, User.class);
 
+        //Getting the token
         String token = UserController.login(loginUser);
 
         if (token != null) {
+            // Returns status code 200 and a message with the users token
             return Response.status(200).type(MediaType.APPLICATION_JSON_TYPE).entity("You're now logged in - your token is: \n" + token).build();
         } else {
+            // Returns status code 400
             return Response.status(400).entity("Incorrect email or password - Try again!").build();
         }
     }
@@ -117,20 +124,25 @@ public class UserEndpoints {
     @Path("/delete/{userId}")
     public Response deleteUser(@PathParam("userId") int id, String body) {
 
+        //Verifying the information in the body (where the token is intented to be)
         DecodedJWT token = UserController.verifier(body);
 
-        if(token.getClaim("test").asInt() == id) {
+        //Checking if the id the user wants to delete matches the user itselfs id, since you cant delete any users other than yourself
+        if (token.getClaim("test").asInt() == id) {
 
             Boolean delete = UserController.delete(token.getClaim("test").asInt());
 
+            //Checking if the boolean is true
             if (delete) {
                 userCache.getUsers(true);
                 // Return a response with status 200 and JSON as type
                 return Response.status(200).type(MediaType.APPLICATION_JSON_TYPE).entity("You deleted your user").build();
             } else {
+                // Returns a response with status code 400
                 return Response.status(400).entity("The user was not found, and therefore not deleted").build();
             }
         } else {
+            // Returns a response with status code 400
             return Response.status(400).entity("You cant delete any other users than your own").build();
         }
     }
@@ -139,20 +151,25 @@ public class UserEndpoints {
     @POST
     @Path("/update/{userId}/{token}")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response updateUser(@PathParam("userId") int id, @PathParam("token") String token, String body)  {
+    public Response updateUser(@PathParam("userId") int id, @PathParam("token") String token, String body) {
 
+        // Read the json from user and transfer it to a user class
         User user = new Gson().fromJson(body, User.class);
 
+        //Verifying the token from the url
         DecodedJWT jwt = UserController.verifier(token);
 
         Boolean update = UserController.update(user, jwt.getClaim("test").asInt());
 
+        //Update the cache
         userCache.getUsers(true);
 
-        // Return a response with status 200 and JSON as type
+        //Checking if the boolean is true
         if (update) {
+            // Return a response with status 200 and JSON as type and the user that's been updated
             return Response.status(200).type(MediaType.APPLICATION_JSON_TYPE).entity("Updated the user with the id: " + id).build();
         } else {
+            // Returns a response with status code 400
             return Response.status(400).entity("The user was not found, and therefore not updated").build();
         }
     }

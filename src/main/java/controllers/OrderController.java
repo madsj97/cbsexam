@@ -27,6 +27,7 @@ public class OrderController {
     }
 
     //SQLs keyword "as" er bare en måde hvorpå du kan give en tabel et alias
+    //SQL query that we wish to run
     String sql = "SELECT *, billing.street_address as billing, shipping.street_address as shipping\n " +
             "FROM orders\n " +
             "JOIN user on orders.user_id = user.id\n " +
@@ -36,12 +37,15 @@ public class OrderController {
             "ON orders.shipping_address_id = shipping.id\n " +
             "WHERE orders.id = " + id;
 
+    // Do the query in the database and create an empty object for the results
     ResultSet rs = dbCon.query(sql);
     Order order = null;
 
     try {
       if(rs.next()) {
         ArrayList<LineItem> lineItems = LineItemController.getLineItemsForOrder(rs.getInt("id"));
+
+        // Create an object instance of user, address (billing & shipping and order from the database data
 
         User user = new User (
                 rs.getInt("id"),
@@ -75,6 +79,7 @@ public class OrderController {
                 rs.getLong("created_at"),
                 rs.getLong("updated_at"));
 
+        //Returns the order
         return order;
 
       } else {
@@ -134,11 +139,13 @@ public class OrderController {
    */
   public static ArrayList<Order> getOrders() {
 
+    //Checking for DB Connection
     if (dbCon == null) {
       dbCon = new DatabaseController();
     }
 
     //SQLs keyword "as" er bare en måde hvorpå du kan give en tabel et alias
+    //SQL query that we wish to run
     String sql = "SELECT *, billing.street_address as billing, shipping.street_address as shipping\n" +
             "FROM orders\n" +
             "JOIN user on orders.user_id = user.id\n" +
@@ -147,12 +154,15 @@ public class OrderController {
             "LEFT JOIN address as shipping\n" +
             "ON orders.shipping_address_id = shipping.id";
 
+    // Do the query in the database and create an arraylist for all the orders
     ResultSet rs = dbCon.query(sql);
     ArrayList<Order> orders = new ArrayList<>();
 
     try {
       while(rs.next()) {
         ArrayList<LineItem> lineItems = LineItemController.getLineItemsForOrder(rs.getInt("id"));
+
+        // Create an object instance of user, address (billing & shipping and order from the database data
 
         User user = new User (
                 rs.getInt("id"),
@@ -186,6 +196,7 @@ public class OrderController {
                 rs.getLong("created_at"),
                 rs.getLong("updated_at"));
 
+        //Adds the orders to the arraylist
         orders.add(order);
       }
     } catch (SQLException e) {
@@ -251,6 +262,7 @@ public class OrderController {
 
     try {
 
+      //Disabling autocommit temporarily, since we dont want to commit an order if its not fully completed
       connection.setAutoCommit(false);
 
       // Save addresses to database and save them back to initial order instance
@@ -292,11 +304,13 @@ public class OrderController {
 
       order.setLineItems(items);
 
+      //Commiting the order
       connection.commit();
 
 
     } catch (SQLException e) {
       try{
+        //If the orders doesnt contain all informationers (ex. missing shipping address) then its rolled back
         connection.rollback();
         System.out.println("Rolled back the changes from DB");
       } catch (SQLException exception) {
@@ -304,6 +318,7 @@ public class OrderController {
       }
     } finally{
       try {
+        //Turns autocommit back on
         connection.setAutoCommit(true);
       } catch (SQLException e) {
         e.printStackTrace();

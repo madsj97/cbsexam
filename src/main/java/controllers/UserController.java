@@ -5,15 +5,18 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 
+//Imported the necessary libraries to use JWTokens
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
-
-import cache.UserCache;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
+
+import cache.UserCache;
+
 import model.User;
+
 import utils.Hashing;
 import utils.Log;
 
@@ -126,7 +129,7 @@ public class UserController {
                         + "', '"
                         + user.getLastname()
                         + "', '"
-                        //Hashing the user password with sha hashing before saving it when creating a user (Gemme saltet i databasen eller lave et nyt salt)
+                        //Hashing the user password with the hashing method for sha with the salt
                         + Hashing.shaWithSalt(user.getPassword())
                         + "', '"
                         + user.getEmail()
@@ -161,7 +164,7 @@ public class UserController {
 
         // Checking if there's a user object with any information in it
         if (user != null) {
-            //Running the method and statement to delete a user on an id
+            //Running the method and statement to delete a user on an id before returning
             dbCon.deleteUpdate("DELETE FROM user WHERE id =" + id);
             return true;
         } else {
@@ -182,7 +185,7 @@ public class UserController {
 
         // Checking if there's a user object with any information in it
         if (user != null) {
-            //Running the method and statement to delete a user on an id
+            //Running the method and statement to update a user on an id before returning
             dbCon.deleteUpdate("UPDATE user SET first_name = '" + user.getFirstname()
                     + "', last_name = '" + user.getLastname()
                     + "', password = '" + Hashing.shaWithSalt(user.getPassword())
@@ -205,25 +208,31 @@ public class UserController {
             dbCon = new DatabaseController();
         }
 
+        //Creating an instance of the usercache to get all users and stores them in an arraylist
         UserCache userCache = new UserCache();
         ArrayList<User> users = userCache.getUsers(false);
 
+        //Creating a timestamp for the current time
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 
+        //A loop the iterates through the users
         for (User user : users) {
+            //Check to see if the information being sent equals to anything in the database
             if (user.getEmail().equals(loginUser.getEmail())
                     && user.getPassword().equals(Hashing.shaWithSalt(loginUser.getPassword()))) {
 
                 try {
+                    //Implemented tokens from the JWT library auth0
                     Algorithm algorithm = Algorithm.HMAC256("secret_tokenkey");
-                    // Using .withClaim and generate a token from the key and a timestamp
+                    //Declaring the issuier, and claiming on timestamp and id. Generates a token from the key and timestamp
                     String token = JWT.create().withIssuer("auth0").withClaim("test_tokenkey", timestamp).
                             withClaim("test", user.getId()).sign(algorithm);
 
+                    //Saves the token on the user and returns
                     user.setToken(token);
                     return token;
                 } catch (JWTCreationException exception) {
-                    //Invalid Signing configuration / Couldn't convert Claims.
+                    //Invalid Signing configuration / Couldn't convert Claims. (auth0 lib from github)
                     exception.getMessage();
                 }
             }
@@ -234,12 +243,15 @@ public class UserController {
 
     public static DecodedJWT verifier (String user) {
 
+        // Writing in the log what we are doing
         Log.writeLog(UserController.class.getName(), user, "Verifying a token", 0);
 
         String token = user;
 
         try {
+            //Implemented tokens from the JWT library auth0
             Algorithm algorithm = Algorithm.HMAC256("secret_tokenkey");
+            //Verifying the token we built in the login method
             JWTVerifier verifier = JWT.require(algorithm).withIssuer("auth0").build(); //Reusable verifier instance
             DecodedJWT jwt = verifier.verify(token);
 

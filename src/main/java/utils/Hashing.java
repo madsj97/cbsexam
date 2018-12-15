@@ -16,7 +16,7 @@ public final class Hashing {
     //String we want to hash
     String hashedPassword = string + salt;
 
-    //Returns the hash + salt
+    //Returns the hash + salt for the md5 hashing method
     return md5(hashedPassword);
   }
 
@@ -57,7 +57,7 @@ public final class Hashing {
     //String we want to hash
     String hashedPassword = string + salt;
 
-    //Returns the hash + salt
+    //Returns the hash + salt for the sha hashing method
     return sha(hashedPassword);
   }
 
