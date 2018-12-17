@@ -224,7 +224,7 @@ public class UserController {
                 try {
                     //Implemented tokens from the JWT library auth0
                     Algorithm algorithm = Algorithm.HMAC256("secret_tokenkey");
-                    //Declaring the issuier, and claiming on timestamp and id. Generates a token from the key and timestamp
+                    //Declaring the issugit er, and claiming on timestamp and id. Generates a token from the key and timestamp
                     String token = JWT.create().withIssuer("auth0").withClaim("test_tokenkey", timestamp).
                             withClaim("test", user.getId()).sign(algorithm);
 
@@ -241,12 +241,12 @@ public class UserController {
         return null;
     }
 
-    public static DecodedJWT verifier (String user) {
+    public static DecodedJWT verifier (String userToken) {
 
         // Writing in the log what we are doing
-        Log.writeLog(UserController.class.getName(), user, "Verifying a token", 0);
+        Log.writeLog(UserController.class.getName(), userToken, "Verifying a token", 0);
 
-        String token = user;
+        String token = userToken;
 
         try {
             //Implemented tokens from the JWT library auth0

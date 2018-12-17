@@ -124,10 +124,10 @@ public class UserEndpoints {
     @Path("/delete/{userId}")
     public Response deleteUser(@PathParam("userId") int id, String body) {
 
-        //Verifying the information in the body (where the token is intented to be)
+        //Verifying the information in the body (where the token is intended to be)
         DecodedJWT token = UserController.verifier(body);
 
-        //Checking if the id the user wants to delete matches the user itselfs id, since you cant delete any users other than yourself
+        //Checking if the id the user wants to delete matches the user itself's id, since you cant delete any users other than yourself
         if (token.getClaim("test").asInt() == id) {
 
             Boolean delete = UserController.delete(token.getClaim("test").asInt());
