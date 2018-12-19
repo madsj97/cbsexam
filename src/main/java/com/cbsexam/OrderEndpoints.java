@@ -17,6 +17,7 @@ import utils.Encryption;
 @Path("order")
 public class OrderEndpoints {
 
+  //Creating an instance of the OrderCache
   private static OrderCache orderCache = new OrderCache();
 
   /**
@@ -74,6 +75,8 @@ public class OrderEndpoints {
 
     // Return the data to the user
     if (createdOrder != null) {
+      //Updating the cache
+      orderCache.getOrders(true);
       // Return a response with status 200 and JSON as type
       return Response.status(200).type(MediaType.APPLICATION_JSON_TYPE).entity(json).build();
     } else {

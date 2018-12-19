@@ -20,6 +20,7 @@ public final class Config {
   private static String SOLR_PATH;
   private static String SOLR_CORE;
   private static long PRODUCT_TTL;
+
   private static long USERS_TTL;
   private static long ORDER_TTL;
   private static String ENCRYPTION_KEY;
@@ -35,6 +36,7 @@ public final class Config {
   public static long getUsersTtl() {
     return USERS_TTL;
   }
+
 
   public static long getProductTtl() {
     return PRODUCT_TTL;
@@ -114,6 +116,7 @@ public final class Config {
     SOLR_PATH = json.get("SOLR_PATH").toString().replace("\"", "");
     SOLR_CORE = json.get("SOLR_CORE").toString().replace("\"", "");
     PRODUCT_TTL = json.get("PRODUCT_TTL").getAsLong();
+
     USERS_TTL = json.get("USERS_TTL").getAsLong();
     ORDER_TTL = json.get("ORDER_TTL").getAsLong();
     ENCRYPTION_KEY = json.get("ENCRYPTION_KEY").getAsString();

@@ -17,6 +17,7 @@ import utils.Log;
 @Path("user")
 public class UserEndpoints {
 
+    //Creating an instance of the UserCache
     private static UserCache userCache = new UserCache();
 
     /**
@@ -88,8 +89,10 @@ public class UserEndpoints {
         // Get the user back with the added ID and return it to the user
         String json = new Gson().toJson(createUser);
 
-        // Return the data to the user
+        // Checks if the user is null
         if (createUser != null) {
+            //If a user is created we force the cache to update
+            userCache.getUsers(true);
             // Return a response with status 200 and JSON as type
             return Response.status(200).type(MediaType.APPLICATION_JSON_TYPE).entity(json).build();
         } else {
@@ -110,6 +113,7 @@ public class UserEndpoints {
         //Getting the token
         String token = UserController.login(loginUser);
 
+        //Checks if the token is null
         if (token != null) {
             // Returns status code 200 and a message with the users token
             return Response.status(200).type(MediaType.APPLICATION_JSON_TYPE).entity("You're now logged in - your token is: \n" + token).build();
@@ -130,10 +134,12 @@ public class UserEndpoints {
         //Checking if the id the user wants to delete matches the user itself's id, since you cant delete any users other than yourself
         if (token.getClaim("test").asInt() == id) {
 
+            //Boolean to check if the delete function can be run or not
             Boolean delete = UserController.delete(token.getClaim("test").asInt());
 
             //Checking if the boolean is true
             if (delete) {
+                //Update the cache
                 userCache.getUsers(true);
                 // Return a response with status 200 and JSON as type
                 return Response.status(200).type(MediaType.APPLICATION_JSON_TYPE).entity("You deleted your user").build();
@@ -159,18 +165,25 @@ public class UserEndpoints {
         //Verifying the token from the url
         DecodedJWT jwt = UserController.verifier(token);
 
-        Boolean update = UserController.update(user, jwt.getClaim("test").asInt());
+        if (jwt.getClaim("test").asInt() == id) {
 
-        //Update the cache
-        userCache.getUsers(true);
+            //Boolean to check if the update function can be run or not
+            Boolean update = UserController.update(user, jwt.getClaim("test").asInt());
 
-        //Checking if the boolean is true
-        if (update) {
-            // Return a response with status 200 and JSON as type and the user that's been updated
-            return Response.status(200).type(MediaType.APPLICATION_JSON_TYPE).entity("Updated the user with the id: " + id).build();
+            //Checking if the boolean is true
+            if (update) {
+                //Update the cache
+                userCache.getUsers(true);
+
+                // Return a response with status 200 and JSON as type and the user that's been updated
+                return Response.status(200).type(MediaType.APPLICATION_JSON_TYPE).entity("Updated the user with the id: " + id).build();
+            } else {
+                // Returns a response with status code 400
+                return Response.status(400).entity("Could not update the information, check if you wrote the correct id").build();
+            }
         } else {
             // Returns a response with status code 400
-            return Response.status(400).entity("The user was not found, and therefore not updated").build();
+            return Response.status(400).entity("Incorrect token or id").build();
         }
     }
 }

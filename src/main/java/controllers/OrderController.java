@@ -27,7 +27,7 @@ public class OrderController {
     }
 
     //SQLs keyword "as" er bare en måde hvorpå du kan give en tabel et alias
-    //SQL query that we wish to run
+    //SQL query that we wish to run. The statement gets rid of the nested queries.
     String sql = "SELECT *, billing.street_address as billing, shipping.street_address as shipping\n " +
             "FROM orders\n " +
             "JOIN user on orders.user_id = user.id\n " +
@@ -91,47 +91,6 @@ public class OrderController {
       return order;
     }
 
-    /*// Build SQL string to query
-    String sql = "SELECT * FROM orders where id=" + id;
-
-    // Do the query in the database and create an empty object for the results
-    ResultSet rs = dbCon.query(sql);
-    Order order = null;
-
-    try {
-      if (rs.next()) {
-
-        // Perhaps we could optimize things a bit here and get rid of nested queries.
-        User user = UserController.getUser(rs.getInt("user_id"));
-        ArrayList<LineItem> lineItems = LineItemController.getLineItemsForOrder(rs.getInt("id"));
-        Address billingAddress = AddressController.getAddress(rs.getInt("billing_address_id"));
-        Address shippingAddress = AddressController.getAddress(rs.getInt("shipping_address_id"));
-
-        // Create an object instance of order from the database data
-        order =
-            new Order(
-                rs.getInt("id"),
-                user,
-                lineItems,
-                billingAddress,
-                shippingAddress,
-                rs.getFloat("order_total"),
-                rs.getLong("created_at"),
-                rs.getLong("updated_at"));
-
-        // Returns the build order
-        return order;
-      } else {
-        System.out.println("No order found");
-      }
-    } catch (SQLException ex) {
-      System.out.println(ex.getMessage());
-    }
-
-    // Returns null
-    return order;
-  }*/
-
   /**
    * Get all orders in database
    *
@@ -145,7 +104,7 @@ public class OrderController {
     }
 
     //SQLs keyword "as" er bare en måde hvorpå du kan give en tabel et alias
-    //SQL query that we wish to run
+    //SQL query that we wish to run. The statement gets rid of nested queries.
     String sql = "SELECT *, billing.street_address as billing, shipping.street_address as shipping\n" +
             "FROM orders\n" +
             "JOIN user on orders.user_id = user.id\n" +
@@ -205,44 +164,6 @@ public class OrderController {
     return orders;
   }
 
-    /*String sql = "SELECT * FROM orders";
-
-    ResultSet rs = dbCon.query(sql);
-    ArrayList<Order> orders = new ArrayList<Order>();
-
-    try {
-      while(rs.next()) {
-
-        // Perhaps we could optimize things a bit here and get rid of nested queries.
-        User user = UserController.getUser(rs.getInt("user_id"));
-        ArrayList<LineItem> lineItems = LineItemController.getLineItemsForOrder(rs.getInt("id"));
-        Address billingAddress = AddressController.getAddress(rs.getInt("billing_address_id"));
-        Address shippingAddress = AddressController.getAddress(rs.getInt("shipping_address_id"));
-
-        // Create an order from the database data
-        Order order =
-            new Order(
-                rs.getInt("id"),
-                user,
-                lineItems,
-                billingAddress,
-                shippingAddress,
-                rs.getFloat("order_total"),
-                rs.getLong("created_at"),
-                rs.getLong("updated_at"));
-
-        // Add order to our list
-        orders.add(order);
-
-      }
-    } catch (SQLException ex) {
-      System.out.println(ex.getMessage());
-    }
-
-    // return the orders
-    return orders;
-  } */
-
   public static Order createOrder(Order order) {
 
     // Write in log that we've reach this step
@@ -262,7 +183,7 @@ public class OrderController {
 
     try {
 
-      //Disabling autocommit temporarily, since we dont want to commit an order if its not fully completed
+      //Disabling autocommit temporarily, since we don't want to commit an order if its not fully completed
       connection.setAutoCommit(false);
 
       // Save addresses to database and save them back to initial order instance

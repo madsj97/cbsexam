@@ -63,10 +63,9 @@ public final class Hashing {
 
   public static String sha(String rawString) {
     try {
+
       // We load the hashing algoritm we wish to use.
       MessageDigest digest = MessageDigest.getInstance("SHA-256");
-
-
 
       // We convert to byte array
       byte[] hash = digest.digest(rawString.getBytes(StandardCharsets.UTF_8));

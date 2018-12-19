@@ -17,6 +17,7 @@ import utils.Encryption;
 @Path("product")
 public class ProductEndpoints {
 
+  //Creating an instance of the ProductCache
   private static ProductCache productCache = new ProductCache();
 
   /**
@@ -27,7 +28,7 @@ public class ProductEndpoints {
   @Path("/{idProduct}")
   public Response getProduct(@PathParam("idProduct") int idProduct) {
 
-    // Call our controller-layer in order to get the order from the DB
+    // Call our controller-layer in products to get the order from the DB
     Product product = ProductController.getProduct(idProduct);
 
     // TODO: Add Encryption to JSON :FIX
@@ -45,7 +46,7 @@ public class ProductEndpoints {
   @Path("/")
   public Response getProducts() {
 
-    // Call our controller-layer in order to get the order from the DB
+    // Getting the products from the cache
     ArrayList<Product> products = productCache.getProducts(false);
 
     // TODO: Add Encryption to JSON :FIX
@@ -74,6 +75,8 @@ public class ProductEndpoints {
 
     // Return the data to the user
     if (createdProduct != null) {
+      //Updating the cache
+      productCache.getProducts(true);
       // Return a response with status 200 and JSON as type
       return Response.status(200).type(MediaType.APPLICATION_JSON_TYPE).entity(json).build();
     } else {

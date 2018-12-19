@@ -5,7 +5,7 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 
-//Imported the necessary libraries to use JWTokens
+//Imported the necessary libraries to use JSON Web Tokens
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
@@ -160,6 +160,7 @@ public class UserController {
             dbCon = new DatabaseController();
         }
 
+        // Setting the users information to be the information we get from the users id in the path
         User user = UserController.getUser(id);
 
         // Checking if there's a user object with any information in it
@@ -224,7 +225,7 @@ public class UserController {
                 try {
                     //Implemented tokens from the JWT library auth0
                     Algorithm algorithm = Algorithm.HMAC256("secret_tokenkey");
-                    //Declaring the issugit er, and claiming on timestamp and id. Generates a token from the key and timestamp
+                    //Declaring the issuer, and claiming on timestamp and id. Generates a token from the key and timestamp
                     String token = JWT.create().withIssuer("auth0").withClaim("test_tokenkey", timestamp).
                             withClaim("test", user.getId()).sign(algorithm);
 
