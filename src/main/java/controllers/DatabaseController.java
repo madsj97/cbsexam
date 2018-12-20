@@ -6,131 +6,136 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+
 import utils.Config;
 
 public class DatabaseController {
 
-  private static Connection connection;
+    private static Connection connection;
 
-  public DatabaseController() {
-    connection = getConnection();
-  }
-
-  /**
-   * Get database connection
-   *
-   * @return a Connection object
-   */
-  public static Connection getConnection() {
-    try {
-      // Set the database connect with the data from the config
-      String url =
-          "jdbc:mysql://"
-              + Config.getDatabaseHost()
-              + ":"
-              + Config.getDatabasePort()
-              + "/"
-              + Config.getDatabaseName()
-              + "?serverTimezone=CET";
-
-      String user = Config.getDatabaseUsername();
-      String password = Config.getDatabasePassword();
-
-      // Register the driver in order to use it
-      DriverManager.registerDriver(new com.mysql.jdbc.Driver());
-
-      // create a connection to the database
-      connection = DriverManager.getConnection(url, user, password);
-
-    } catch (SQLException e) {
-      System.out.println(e.getMessage());
+    public DatabaseController() {
+        connection = getConnection();
     }
 
-    return connection;
-  }
+    /**
+     * Get database connection
+     *
+     * @return a Connection object
+     */
+    public static Connection getConnection() {
+        if (connection != null) {
+            return connection;
+        }
 
-  /**
-   * Do a query in the database
-   *
-   * @return a ResultSet or Null if Empty
-   */
-  public ResultSet query(String sql) {
+        try {
+            // Set the database connect with the data from the config
+            String url =
+                    "jdbc:mysql://"
+                            + Config.getDatabaseHost()
+                            + ":"
+                            + Config.getDatabasePort()
+                            + "/"
+                            + Config.getDatabaseName()
+                            + "?serverTimezone=CET";
 
-    // Check if we have a connection
-    if (connection == null)
-      connection = getConnection();
+            String user = Config.getDatabaseUsername();
+            String password = Config.getDatabasePassword();
 
+            // Register the driver in order to use it
+            DriverManager.registerDriver(new com.mysql.jdbc.Driver());
 
-    // We set the resultset as empty.
-    ResultSet rs = null;
+            // create a connection to the database
+            connection = DriverManager.getConnection(url, user, password);
 
-    try {
-      // Build the statement as a prepared statement
-      PreparedStatement stmt = connection.prepareStatement(sql);
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
 
-      // Actually fire the query to the DB
-      rs = stmt.executeQuery();
-
-      // Return the results
-      return rs;
-    } catch (SQLException e) {
-      System.out.println(e.getMessage());
+        return connection;
     }
 
-    // Return the resultset which at this point will be null
-    return rs;
-  }
+    /**
+     * Do a query in the database
+     *
+     * @return a ResultSet or Null if Empty
+     */
+    public ResultSet query(String sql) {
 
-  public int insert(String sql) {
+        // Check if we have a connection
+        if (connection == null)
+            connection = getConnection();
 
-    // Set key to 0 as a start
-    int result = 0;
 
-    // Check that we have connection
-    if (connection == null)
-      connection = getConnection();
+        // We set the resultset as empty.
+        ResultSet rs = null;
 
-    try {
-      // Build the statement up in a safe way
-      PreparedStatement statement =
-          connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+        try {
+            // Build the statement as a prepared statement
+            PreparedStatement stmt = connection.prepareStatement(sql);
 
-      // Execute query
-      result = statement.executeUpdate();
+            // Actually fire the query to the DB
+            rs = stmt.executeQuery();
 
-      // Get our key back in order to update the user
-      ResultSet generatedKeys = statement.getGeneratedKeys();
-      if (generatedKeys.next()) {
-        return generatedKeys.getInt(1);
-      }
-    } catch (SQLException e) {
-      System.out.println(e.getMessage());
+            // Return the results
+            return rs;
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+
+        // Return the resultset which at this point will be null
+        return rs;
     }
 
-    // Return the resultset which at this point will be null
-    return result;
-  }
+    public int insert(String sql) {
 
-  // Creating a method so we can delete, but also update an object.
-  // Reason behind creating both in only one method, is that the method would have identical code
-  public boolean deleteUpdate(String sql) {
+        // Set key to 0 as a start
+        int result = 0;
 
-    //Checking for connection
-    if (connection == null) {
-      connection = getConnection();
+        // Check that we have connection
+        if (connection == null)
+            connection = getConnection();
+
+        try {
+            // Build the statement up in a safe way
+            PreparedStatement statement =
+                    connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+
+            // Execute query
+            result = statement.executeUpdate();
+
+            // Get our key back in order to update the user
+            ResultSet generatedKeys = statement.getGeneratedKeys();
+            if (generatedKeys.next()) {
+                return generatedKeys.getInt(1);
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+
+        // Return the resultset which at this point will be null
+        return result;
     }
 
-    try {
-      // Building the statement
-      PreparedStatement deleteUpdate = connection.prepareStatement(sql);
+    // Creating a method so we can delete, but also update an object.
+    // Reason behind creating both in only one method, is that the method would have identical code
+    public boolean deleteUpdate(String sql) {
 
-      //Executing the query
-      deleteUpdate.executeUpdate();
+        //Checking for connection
+        if (connection == null) {
+            connection = getConnection();
+        }
 
-      return true;
-    } catch (SQLException e) {
-      System.out.println(e.getMessage());
-      return false;
+        try {
+            // Building the statement
+            PreparedStatement deleteUpdate = connection.prepareStatement(sql);
+
+            //Executing the query
+            deleteUpdate.executeUpdate();
+
+            return true;
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+            return false;
+        }
     }
-  }
 }

@@ -132,10 +132,10 @@ public class UserEndpoints {
         DecodedJWT token = UserController.verifier(body);
 
         //Checking if the id the user wants to delete matches the user itself's id, since you cant delete any users other than yourself
-        if (token.getClaim("test").asInt() == id) {
+        if (token.getClaim("id_key").asInt() == id) {
 
             //Boolean to check if the delete function can be run or not
-            Boolean delete = UserController.delete(token.getClaim("test").asInt());
+            Boolean delete = UserController.delete(token.getClaim("id_key").asInt());
 
             //Checking if the boolean is true
             if (delete) {
@@ -165,10 +165,10 @@ public class UserEndpoints {
         //Verifying the token from the url
         DecodedJWT jwt = UserController.verifier(token);
 
-        if (jwt.getClaim("test").asInt() == id) {
+        if (jwt.getClaim("id_key").asInt() == id) {
 
             //Boolean to check if the update function can be run or not
-            Boolean update = UserController.update(user, jwt.getClaim("test").asInt());
+            Boolean update = UserController.update(user, jwt.getClaim("id_key").asInt());
 
             //Checking if the boolean is true
             if (update) {
